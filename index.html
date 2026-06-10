@@ -1,16 +1,46 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pregnancy Care Testnet</title>
+    <title>Pregnancy Care - Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
-    <h1>❤️ Pregnancy Care
-  - Testnet</h1>
-    <p>Chào mừng bạn!</p>
-    <a href="pi://pay?amount=0.01&memo=Testnet%20payment">
-        <button style="padding:15px 30px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px;">
-            💜 Thanh toán 0.01 Pi
-        </button>
-    </a>
+    <h1>Pregnancy Care - Testnet</h1>
+    <p>Chào mừng bạn đến với ứng dụng Testnet!</p>
+    
+    <button id="payButton" style="padding:15px 30px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px; cursor:pointer;">
+        Thanh toan 0.01 Pi
+    </button>
+
+    <div id="status"></div>
+
+    <script>
+        const payButton = document.getElementById('payButton');
+        const statusDiv = document.getElementById('status');
+
+        payButton.addEventListener('click', function() {
+            statusDiv.innerHTML = 'Dang xu ly thanh toan...';
+            
+            Pi.createPayment({
+                amount: 0.01,
+                memo: "Thanh toan Testnet",
+                metadata: {}
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    statusDiv.innerHTML = 'Giao dich dang cho phe duyet...';
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    statusDiv.innerHTML = 'Thanh toan thanh cong! Ma giao dich: ' + txid;
+                },
+                onCancel: function(paymentId) {
+                    statusDiv.innerHTML = 'Huy thanh toan.';
+                },
+                onError: function(error, payment) {
+                    statusDiv.innerHTML = 'Loi: ' + error.message;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
