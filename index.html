@@ -8,7 +8,6 @@
     <h1>❤️ Pregnancy Care
   - Testnet</h1>
     <p>Chào mừng bạn!</p>
-    <p>Nhấn nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
     <button onclick="payPi()" style="padding:15px 30px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px;">
         💜 Thanh toán 0.01 Pi
     </button>
@@ -20,7 +19,7 @@
                 memo: "Testnet payment",
                 metadata: { app: "pregnancycare5069" }
             }).then(function(payment) {
-                alert("✅ Thanh toán thành công!");
+                alert("✅ Thành công!");
             }).catch(function(error) {
                 alert("❌ Lỗi: " + error.message);
             });
