@@ -1,17 +1,35 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Testnet App</title>
+    <title>Pregnancy Care Testnet</title>
 </head>
 <body>
-    <h1>❤️ Pregnancy Care - Testnet</h1>
-    <p>Chào mừng bạn đến với app Testnet!</p>
-    <p>Vui lòng thanh toán 0.01 Pi để kích hoạt:</p>
-    <a href="https://wallet-testnet.minepi.com/pay?amount=0.01&memo=Testnet%20payment&app=pregnancycare5069">
-        <button style="padding:15px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px;">
-            💜 Thanh toán 0.01 Pi
-        </button>
-    </a>
+    <h1>❤️ Pregnancy Care
+  - Testnet</h1>
+    <p>Chào mừng bạn!</p>
+    <p>Nhấn nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
+    <button onclick="payPi()" style="padding:15px 30px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px;">
+        💜 Thanh toán 0.01 Pi
+    </button>
+
+    <script>
+        function payPi() {
+            if (window.Pi) {
+                Pi.createPayment({
+                    amount: 0.01,
+                    memo: "Testnet payment",
+                    metadata: { app: "pregnancycare5069" }
+                }).then(function(payment) {
+                    console.log("Payment successful:", payment);
+                    alert("✅ Thanh toán thành công!");
+                }).catch(function(error) {
+                    console.error("Payment failed:", error);
+                    alert("❌ Thanh toán thất bại: " + error.message);
+                });
+            } else {
+                alert("❌ Vui lòng mở app trong Pi Browser!");
+            }
+        }
+    </script>
 </body>
 </html>
