@@ -3,38 +3,19 @@ html
 <html>
 <head>
     <title>Pregnancy Care - Testnet</title>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
+        a button { 
+            padding: 15px 30px; font-size: 18px; background: #8B5CF6; 
+            color: white; border: none; border-radius: 8px; cursor: pointer; 
+        }
+    </style>
 </head>
 <body>
     <h1>Pregnancy Care - Testnet</h1>
-    <p>Nhấn nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
-    <button id="payBtn" style="padding:15px 30px; font-size:18px; background:#8B5CF6; color:white; border:none; border-radius:8px;">
-        💜 Thanh toán 0.01 Pi
-    </button>
-    <p id="status"></p>
-
-    <script>
-        document.getElementById('payBtn').onclick = function() {
-            document.getElementById('status').innerText = 'Đang kết nối ví...';
-            Pi.createPayment({
-                amount: 0.01,
-                memo: "Testnet payment",
-                metadata: {}
-            }, {
-                onReadyForServerApproval: function(paymentId) {
-                    document.getElementById('status').innerText = 'Chờ phê duyệt từ server...';
-                },
-                onReadyForServerCompletion: function(paymentId, txid) {
-                    document.getElementById('status').innerText = '✅ Thanh toán thành công! Mã: ' + txid;
-                },
-                onCancel: function(paymentId) {
-                    document.getElementById('status').innerText = '❌ Đã hủy thanh toán.';
-                },
-                onError: function(err, payment) {
-                    document.getElementById('status').innerText = 'Lỗi: ' + err.message;
-                }
-            });
-        };
-    </script>
+    <p>Bấm nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
+    <a href="pi://pay?amount=0.01&memo=Testnet%20payment">
+        <button>💜 Thanh toán 0.01 Pi</button>
+    </a>
 </body>
 </html>
