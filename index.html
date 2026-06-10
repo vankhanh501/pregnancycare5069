@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Pregnancy Care Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
     <h1>❤️ Pregnancy Care
@@ -14,21 +15,15 @@
 
     <script>
         function payPi() {
-            if (window.Pi) {
-                Pi.createPayment({
-                    amount: 0.01,
-                    memo: "Testnet payment",
-                    metadata: { app: "pregnancycare5069" }
-                }).then(function(payment) {
-                    console.log("Payment successful:", payment);
-                    alert("✅ Thanh toán thành công!");
-                }).catch(function(error) {
-                    console.error("Payment failed:", error);
-                    alert("❌ Thanh toán thất bại: " + error.message);
-                });
-            } else {
-                alert("❌ Vui lòng mở app trong Pi Browser!");
-            }
+            Pi.createPayment({
+                amount: 0.01,
+                memo: "Testnet payment",
+                metadata: { app: "pregnancycare5069" }
+            }).then(function(payment) {
+                alert("✅ Thanh toán thành công!");
+            }).catch(function(error) {
+                alert("❌ Lỗi: " + error.message);
+            });
         }
     </script>
 </body>
