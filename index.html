@@ -3,15 +3,38 @@ html
 <html>
 <head>
     <title>Pregnancy Care - Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
     <h1>Pregnancy Care - Testnet</h1>
-    <p>Bấm nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
+    <p>Nhấn nút bên dưới để thanh toán 0.01 Pi Testnet:</p>
+    <button id="payBtn" style="padding:15px 30px; font-size:18px; background:#8B5CF6; color:white; border:none; border-radius:8px;">
+        💜 Thanh toán 0.01 Pi
+    </button>
+    <p id="status"></p>
 
-    <a href="https://wallet.pinet.com/api/pay?amount=0.01&memo=Testnet&type=testnet&redirect=https://pregnancycare-testnet.vercel.app">
-        <button style="padding:15px 30px; font-size:20px; background-color:#8B5CF6; color:white; border:none; border-radius:8px; cursor:pointer;">
-            💜 Thanh toán 0.01 Pi Testnet
-        </button>
-    </a>
+    <script>
+        document.getElementById('payBtn').onclick = function() {
+            document.getElementById('status').innerText = 'Đang kết nối ví...';
+            Pi.createPayment({
+                amount: 0.01,
+                memo: "Testnet payment",
+                metadata: {}
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    document.getElementById('status').innerText = 'Chờ phê duyệt từ server...';
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    document.getElementById('status').innerText = '✅ Thanh toán thành công! Mã: ' + txid;
+                },
+                onCancel: function(paymentId) {
+                    document.getElementById('status').innerText = '❌ Đã hủy thanh toán.';
+                },
+                onError: function(err, payment) {
+                    document.getElementById('status').innerText = 'Lỗi: ' + err.message;
+                }
+            });
+        };
+    </script>
 </body>
 </html>
