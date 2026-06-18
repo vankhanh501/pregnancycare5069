@@ -3,13 +3,9 @@ html
 <html>
 <head>
     <title>Pregnancy Care Testnet</title>
-    <!-- Thêm Pi SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-        // Khởi tạo Pi SDK
         Pi.init({ version: "2.0" });
-        
-        // Hàm thanh toán
         function payPi() {
             Pi.createPayment({
                 amount: 0.01,
@@ -17,16 +13,16 @@ html
                 metadata: { test: true }
             }, {
                 onReadyForServerApproval: function(paymentId) {
-                    console.log("Payment approved: " + paymentId);
+                    alert("Payment approved: " + paymentId);
                 },
                 onReadyForServerCompletion: function(paymentId, txid) {
-                    console.log("Payment completed: " + txid);
+                    alert("Payment completed: " + txid);
                 },
                 onCancel: function(paymentId) {
-                    console.log("Payment cancelled");
+                    alert("Payment cancelled");
                 },
                 onError: function(error) {
-                    console.error(error);
+                    alert("Error: " + error);
                 }
             });
         }
@@ -34,7 +30,7 @@ html
 </head>
 <body>
     <h1>Pregnancy Care Testnet</h1>
-    <button onclick="payPi()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px;">
+    <button onclick="payPi()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px;">
         💜 Pay 0.01 Pi Testnet
     </button>
 </body>
