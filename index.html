@@ -1,29 +1,41 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
     <title>Pregnancy Care Testnet</title>
+    <!-- Thêm Pi SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-</head>
-<body>
-    <h1>❤️ Pregnancy Care
-  - Testnet</h1>
-    <p>Chào mừng bạn!</p>
-    <button onclick="payPi()" style="padding:15px 30px; font-size:18px; background-color:#8B5CF6; color:white; border:none; border-radius:8px; cursor:pointer;">
-        💜 Thanh toán 0.01 Pi
-    </button>
-
     <script>
+        // Khởi tạo Pi SDK
+        Pi.init({ version: "2.0" });
+        
+        // Hàm thanh toán
         function payPi() {
             Pi.createPayment({
                 amount: 0.01,
-                memo: "Testnet payment",
-                metadata: { app: "pregnancycare5069" }
-            }).then(function(payment) {
-                alert("✅ Thanh toán thành công!");
-            }).catch(function(error) {
-                alert("❌ Lỗi: " + error.message);
+                memo: "Test payment",
+                metadata: { test: true }
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    console.log("Payment approved: " + paymentId);
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    console.log("Payment completed: " + txid);
+                },
+                onCancel: function(paymentId) {
+                    console.log("Payment cancelled");
+                },
+                onError: function(error) {
+                    console.error(error);
+                }
             });
         }
     </script>
+</head>
+<body>
+    <h1>Pregnancy Care Testnet</h1>
+    <button onclick="payPi()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px;">
+        💜 Pay 0.01 Pi Testnet
+    </button>
 </body>
 </html>
