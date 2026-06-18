@@ -1,0 +1,36 @@
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        Pi.init({ version: "2.0" });
+        
+        function pay() {
+            Pi.createPayment({
+                amount: 0.01,
+                memo: "test",
+                metadata: {test: true}
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    console.log(paymentId);
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    console.log(txid);
+                },
+                onCancel: function(paymentId) {
+                    console.log("cancel");
+                },
+                onError: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Test Payment</h1>
+    <button onclick="pay()" style="padding:20px; font-size:20px;">Pay 0.01 Pi</button>
+</body>
+</html>
