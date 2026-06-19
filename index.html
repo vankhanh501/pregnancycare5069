@@ -4,7 +4,6 @@
     <title>Pregnancy Care Testnet</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-        // Khởi tạo Pi SDK
         Pi.init({ version: "2.0" });
 
         function authenticateAndPay() {
@@ -12,15 +11,32 @@
                 console.log("Incomplete payment:", payment);
             }).then(function(auth) {
                 console.log("Auth success:", auth);
-                return Pi.createPayment({
+                
+                // Tạo thanh toán với đầy đủ callback
+                Pi.createPayment({
                     amount: 0.01,
                     memo: "Test payment",
                     metadata: { test: true }
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        console.log("Ready for server approval:", paymentId);
+                        // Gửi paymentId lên server của bạn (nếu có)
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        console.log("Payment completed:", txid);
+                        alert("✅ Thanh toán thành công! Mã giao dịch: " + txid);
+                    },
+                    onCancel: function(paymentId) {
+                        console.log("Payment cancelled:", paymentId);
+                        alert("❌ Giao dịch đã bị hủy");
+                    },
+                    onError: function(error, payment) {
+                        console.error("Payment error:", error);
+                        alert("❌ Lỗi: " + error.message);
+                    }
                 });
-            }).then(function(payment) {
-                alert("✅ Thanh toán thành công!");
             }).catch(function(error) {
-                alert("❌ Lỗi: " + (error.message || error));
+                alert("❌ Lỗi xác thực: " + (error.message || error));
             });
         }
     </script>
