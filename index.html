@@ -3,40 +3,32 @@
 <head>
     <title>Pregnancy Care Testnet</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <script>
-        Pi.init({ version: "2.0" });
-
-        // Tự động xác thực khi trang load
-        Pi.authenticate(['payments'], function(payment) {
-            console.log("Incomplete payment found:", payment);
-        }).then(function(auth) {
-            console.log("Authenticated successfully!");
-            document.getElementById("status").innerText = "✅ Đã xác thực! Có thể thanh toán.";
-        }).catch(function(error) {
-            console.error("Authentication failed:", error);
-            document.getElementById("status").innerText = "❌ Xác thực thất bại!";
-        });
-
-        function payPi() {
-            Pi.createPayment({
-                amount: 0.01,
-                memo: "Test payment",
-                metadata: { test: true }
-            }).then(function(payment) {
-                console.log("Payment successful:", payment);
-                alert("✅ Thanh toán thành công!");
-            }).catch(function(error) {
-                console.error("Payment failed:", error);
-                alert("❌ Lỗi: " + error.message);
-            });
-        }
-    </script>
 </head>
 <body>
     <h1>❤️ Pregnancy Care Testnet</h1>
-    <p id="status">⏳ Đang xác thực...</p>
-    <button onclick="payPi()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px; cursor:pointer;">
-        💜 Pay 0.01 Pi Testnet
+    <p>Nhấn nút bên dưới để xác thực và thanh toán:</p>
+    <button onclick="authenticateAndPay()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px; cursor:pointer;">
+        💜 Xác thực & Thanh toán 0.01 Pi
     </button>
+
+    <script>
+        function authenticateAndPay() {
+            Pi.authenticate(['payments'], function(payment) {
+                console.log("Incomplete payment:", payment);
+            }).then(function(auth) {
+                console.log("Auth success:", auth);
+                // Sau khi xác thực thành công, tự động thanh toán
+                return Pi.createPayment({
+                    amount: 0.01,
+                    memo: "Test payment",
+                    metadata: { test: true }
+                });
+            }).then(function(payment) {
+                alert("✅ Thanh toán thành công!");
+            }).catch(function(error) {
+                alert("❌ Lỗi: " + (error.message || error));
+            });
+        }
+    </script>
 </body>
 </html>
