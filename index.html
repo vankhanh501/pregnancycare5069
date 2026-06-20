@@ -2,14 +2,74 @@
 <html>
 <head>
     <title>Pregnancy Care Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        Pi.init({ version: "2.0" });
+
+        function authenticateAndPay() {
+            Pi.authenticate(['payments'], function(payment) {
+                console.log("Incomplete payment:", payment);
+            }).then(function(auth) {
+                console.log("Auth success:", auth);
+
+                Pi.createPayment({
+                    amount: 0.01,
+                    memo: "Test payment",
+                    metadata: { test: true }
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        console.log("Step 1: Approving payment:", paymentId);
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            console.log("Approved:", data);
+                        }).catch(function(error) {
+                            console.error("Approve error:", error);
+                        });
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        console.log("Step 2: Completing payment:", paymentId, txid);
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            console.log("Completed:", data);
+                            alert("✅ Payment successful! TXID: " + txid);
+                        }).catch(function(error) {
+                            console.error("Complete error:", error);
+                        });
+                    },
+                    onCancel: function(paymentId) {
+                        console.log("Payment cancelled:", paymentId);
+                        alert("❌ Payment cancelled");
+                    },
+                    onError: function(error, payment) {
+                        console.error("Payment error:", error);
+                        alert("❌ Error: " + error.message);
+                    }
+                });
+            }).catch(function(error) {
+                alert("❌ Auth error: " + (error.message || error));
+            });
+        }
+    </script>
 </head>
 <body>
     <h1>❤️ Pregnancy Care Testnet</h1>
-    <p>Click the link below to pay 0.01 Pi Testnet:</p>
-    <a href="https://wallet-testnet.minepi.com/pay/0.01/Test%20payment" target="_blank">
-        <button style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:10px; font-size:20px; cursor:pointer;">
-            💜 Pay 0.01 Pi Testnet
-        </button>
-    </a>
+    <p>Click the button below to authenticate and pay:</p>
+    <button onclick="authenticateAndPay()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px; cursor:pointer;">
+        Authenticate & Pay 0.01 Pi
+    </button>
 </body>
 </html>
