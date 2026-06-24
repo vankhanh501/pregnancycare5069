@@ -8,60 +8,48 @@ html
         Pi.init({ version: "2.0" });
 
         function payPi() {
-            Pi.authenticate(['payments'], function(payment) {
-                console.log("Incomplete:", payment);
+            Pi.authenticate(['payments'], function(p) {
+                console.log("Incomplete:", p);
             }).then(function(auth) {
-                console.log("✅ Auth OK");
-                
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Test payment",
+                    memo: "Test",
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        console.log("✅ Approval:", paymentId);
-                        // Tự động approve ngay trên trình duyệt
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             }
-                        }).then(r => r.json()).then(console.log);
+                        });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        console.log("✅ Complete:", txid);
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             }
-                        }).then(r => r.json()).then(function() {
-                            alert("✅ Thanh toán thành công!");
-                            // Tự động reload để đếm số giao dịch
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 2000);
+                        }).then(function() {
+                            alert("✅ Thành công!");
+                            location.reload();
                         });
                     },
-                    onCancel: function(paymentId) {
-                        alert("❌ Bạn đã hủy!");
-                    },
-                    onError: function(error) {
-                        alert("❌ Lỗi: " + error.message);
-                    }
+                    onCancel: function() { alert("❌ Đã hủy"); },
+                    onError: function(e) { alert("❌ Lỗi: " + e.message); }
                 });
-            }).catch(function(err) {
-                alert("❌ Lỗi xác thực: " + err.message);
+            }).catch(function(e) {
+                alert("❌ Lỗi: " + e.message);
             });
         }
     </script>
 </head>
 <body>
-    <h1>🧡 Pregnancy Care Testnet</h1>
+    <h1>🧡 Pregnancy Care</h1>
     <button onclick="payPi()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
-        💜 Thanh toán 0.01 Pi Testnet
+        💜 Pay 0.01 Pi
     </button>
 </body>
 </html>
