@@ -1,0 +1,54 @@
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Pay</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        Pi.init({ version: "2.0" });
+        function pay() {
+            Pi.authenticate(['payments'], function() {}).then(function(auth) {
+                Pi.createPayment({
+                    amount: 0.01,
+                    memo: "test",
+                    metadata: {}
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        alert("Payment ID: " + paymentId);
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(function(r) { return r.json(); }).then(function(d) {
+                            alert("Approved!");
+                        });
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        alert("Completed: " + txid);
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(function() {
+                            alert("✅ Complete!");
+                            setTimeout(function() { window.location.reload(); }, 2000);
+                        });
+                    },
+                    onCancel: function() { alert("Cancelled"); },
+                    onError: function(e) { alert("Error: " + e.message); }
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Test Payment</h1>
+    <button onclick="pay()" style="padding:20px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px;">
+        Pay 0.01 Pi
+    </button>
+</body>
+</html>
