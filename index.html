@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,70 +7,61 @@
     <script>
         Pi.init({ version: "2.0" });
 
-        function authenticateAndPay() {
+        function payPi() {
             Pi.authenticate(['payments'], function(payment) {
-                console.log("Incomplete payment:", payment);
+                console.log("Incomplete:", payment);
             }).then(function(auth) {
-                console.log("Auth success:", auth);
-
+                console.log("✅ Auth OK");
+                
                 Pi.createPayment({
                     amount: 0.01,
                     memo: "Test payment",
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        console.log("Step 1: Approving payment:", paymentId);
+                        console.log("✅ Approval:", paymentId);
+                        // Tự động approve ngay trên trình duyệt
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             }
-                        }).then(function(response) {
-                            return response.json();
-                        }).then(function(data) {
-                            console.log("Approved:", data);
-                        }).catch(function(error) {
-                            console.error("Approve error:", error);
-                        });
+                        }).then(r => r.json()).then(console.log);
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        console.log("Step 2: Completing payment:", paymentId, txid);
+                        console.log("✅ Complete:", txid);
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             }
-                        }).then(function(response) {
-                            return response.json();
-                        }).then(function(data) {
-                            console.log("Completed:", data);
-                            alert("✅ Payment successful! TXID: " + txid);
-                        }).catch(function(error) {
-                            console.error("Complete error:", error);
+                        }).then(r => r.json()).then(function() {
+                            alert("✅ Thanh toán thành công!");
+                            // Tự động reload để đếm số giao dịch
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 2000);
                         });
                     },
                     onCancel: function(paymentId) {
-                        console.log("Payment cancelled:", paymentId);
-                        alert("❌ Payment cancelled");
+                        alert("❌ Bạn đã hủy!");
                     },
-                    onError: function(error, payment) {
-                        console.error("Payment error:", error);
-                        alert("❌ Error: " + error.message);
+                    onError: function(error) {
+                        alert("❌ Lỗi: " + error.message);
                     }
                 });
-            }).catch(function(error) {
-                alert("❌ Auth error: " + (error.message || error));
+            }).catch(function(err) {
+                alert("❌ Lỗi xác thực: " + err.message);
             });
         }
     </script>
 </head>
 <body>
-    <h1>❤️ Pregnancy Care Testnet</h1>
-    <p>Click the button below to authenticate and pay:</p>
-    <button onclick="authenticateAndPay()" style="padding:15px 30px; background:#8B5CF6; color:white; border:none; border-radius:8px; font-size:18px; cursor:pointer;">
-        Authenticate & Pay 0.01 Pi
+    <h1>🧡 Pregnancy Care Testnet</h1>
+    <button onclick="payPi()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
+        💜 Thanh toán 0.01 Pi Testnet
     </button>
 </body>
 </html>
