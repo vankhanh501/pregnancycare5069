@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,15 +6,18 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
         Pi.init({ version: "2.0" });
+        
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
+                alert("✅ Authenticated! Token: " + auth.accessToken.substring(0, 20) + "...");
+                
                 Pi.createPayment({
                     amount: 0.01,
                     memo: "test",
                     metadata: {}
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        alert("Payment ID: " + paymentId);
+                        alert("✅ Payment ID: " + paymentId);
                         fetch('/api/approve', {
                             method: 'POST',
                             headers: {
@@ -21,12 +25,16 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ paymentId: paymentId })
-                        }).then(function(r) { return r.json(); }).then(function(d) {
-                            alert("✅ Approved!");
+                        }).then(function(r) { 
+                            return r.json(); 
+                        }).then(function(d) {
+                            alert("✅ Approve response: " + JSON.stringify(d));
+                        }).catch(function(e) {
+                            alert("❌ Approve fetch error: " + e.message);
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        alert("Completed: " + txid);
+                        alert("✅ TXID: " + txid);
                         fetch('/api/complete', {
                             method: 'POST',
                             headers: {
@@ -37,11 +45,15 @@
                         }).then(function() {
                             alert("✅ Complete!");
                             setTimeout(function() { window.location.reload(); }, 2000);
+                        }).catch(function(e) {
+                            alert("❌ Complete fetch error: " + e.message);
                         });
                     },
                     onCancel: function() { alert("Cancelled"); },
                     onError: function(e) { alert("Error: " + e.message); }
                 });
+            }).catch(function(e) {
+                alert("❌ Auth error: " + e.message);
             });
         }
     </script>
