@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,24 +14,26 @@ html
                 }, {
                     onReadyForServerApproval: function(paymentId) {
                         alert("Payment ID: " + paymentId);
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                        fetch('/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
                         }).then(function(r) { return r.json(); }).then(function(d) {
-                            alert("Approved!");
+                            alert("✅ Approved!");
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         alert("Completed: " + txid);
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                        fetch('/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
                         }).then(function() {
                             alert("✅ Complete!");
                             setTimeout(function() { window.location.reload(); }, 2000);
