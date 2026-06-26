@@ -7,9 +7,11 @@ html
     <script>
         Pi.init({ version: "2.0" });
         
+        const API_URL = 'https://pregnancycare5069.vercel.app';
+        
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
-                alert("✅ Authenticated! Token: " + auth.accessToken.substring(0, 20) + "...");
+                alert("✅ Authenticated!");
                 
                 Pi.createPayment({
                     amount: 0.01,
@@ -18,7 +20,9 @@ html
                 }, {
                     onReadyForServerApproval: function(paymentId) {
                         alert("✅ Payment ID: " + paymentId);
-                        fetch('/api/approve', {
+                        
+                        // Gọi API approve với URL đầy đủ
+                        fetch(API_URL + '/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
@@ -28,25 +32,28 @@ html
                         }).then(function(r) { 
                             return r.json(); 
                         }).then(function(d) {
-                            alert("✅ Approve response: " + JSON.stringify(d));
+                            alert("✅ Approved! " + JSON.stringify(d));
                         }).catch(function(e) {
-                            alert("❌ Approve fetch error: " + e.message);
+                            alert("❌ Error: " + e.message);
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         alert("✅ TXID: " + txid);
-                        fetch('/api/complete', {
+                        
+                        fetch(API_URL + '/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                        }).then(function(r) {
+                            return r.json();
                         }).then(function() {
                             alert("✅ Complete!");
                             setTimeout(function() { window.location.reload(); }, 2000);
                         }).catch(function(e) {
-                            alert("❌ Complete fetch error: " + e.message);
+                            alert("❌ Error: " + e.message);
                         });
                     },
                     onCancel: function() { alert("Cancelled"); },
