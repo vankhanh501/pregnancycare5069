@@ -1,0 +1,76 @@
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pay Testnet</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        // Khởi tạo Pi SDK
+        Pi.init({ version: "2.0" });
+
+        // Hàm thanh toán
+        async function doPayment() {
+            try {
+                // Bước 1: Xác thực
+                alert("🔄 Đang xác thực...");
+                const auth = await Pi.authenticate(['payments'], function(payment) {
+                    console.log("Incomplete payment:", payment);
+                });
+                alert("✅ Xác thực thành công!");
+
+                // Bước 2: Tạo thanh toán
+                alert("🔄 Đang tạo thanh toán...");
+                Pi.createPayment({
+                    amount: 0.01,
+                    memo: "test",
+                    metadata: { test: true }
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        alert("✅ Payment ID: " + paymentId);
+                        // Gọi API approve
+                        fetch('/api/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
+                        });
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        alert("✅ TXID: " + txid);
+                        // Gọi API complete
+                        fetch('/api/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                        }).then(function() {
+                            alert("✅ Hoàn tất!");
+                            location.reload();
+                        });
+                    },
+                    onCancel: function(paymentId) {
+                        alert("❌ Đã hủy");
+                    },
+                    onError: function(error, payment) {
+                        alert("❌ Lỗi: " + error.message);
+                    }
+                });
+
+            } catch (error) {
+                alert("❌ Lỗi xác thực: " + error.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>🧡 Pi Testnet Payment</h1>
+    <p>Nhấn nút để thanh toán 0.01 Pi Testnet</p>
+    <button onclick="doPayment()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px; cursor:pointer;">
+        💜 Pay 0.01 Pi
+    </button>
+</body>
+</html>
