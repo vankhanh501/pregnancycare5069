@@ -5,20 +5,16 @@ html
     <title>Pay Testnet</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
-        // Khởi tạo Pi SDK
         Pi.init({ version: "2.0" });
 
-        // Hàm thanh toán
         async function doPayment() {
             try {
-                // Bước 1: Xác thực
                 alert("🔄 Đang xác thực...");
                 const auth = await Pi.authenticate(['payments'], function(payment) {
                     console.log("Incomplete payment:", payment);
                 });
                 alert("✅ Xác thực thành công!");
 
-                // Bước 2: Tạo thanh toán
                 alert("🔄 Đang tạo thanh toán...");
                 Pi.createPayment({
                     amount: 0.01,
@@ -27,7 +23,6 @@ html
                 }, {
                     onReadyForServerApproval: function(paymentId) {
                         alert("✅ Payment ID: " + paymentId);
-                        // Gọi API approve
                         fetch('/api/approve', {
                             method: 'POST',
                             headers: {
@@ -35,11 +30,15 @@ html
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ paymentId: paymentId })
+                        }).then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            console.log('Approve done:', d);
+                        }).catch(function(e) {
+                            console.error('Approve fetch error:', e.message);
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         alert("✅ TXID: " + txid);
-                        // Gọi API complete
                         fetch('/api/complete', {
                             method: 'POST',
                             headers: {
@@ -49,7 +48,7 @@ html
                             body: JSON.stringify({ paymentId: paymentId, txid: txid })
                         }).then(function() {
                             alert("✅ Hoàn tất!");
-                            location.reload();
+                            setTimeout(function() { location.reload(); }, 2000);
                         });
                     },
                     onCancel: function(paymentId) {
