@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +5,7 @@ html
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
         Pi.init({ version: "2.0" });
-
+        
         async function doPayment() {
             try {
                 alert("🔄 Đang xác thực...");
@@ -14,7 +13,7 @@ html
                     console.log("Incomplete payment:", payment);
                 });
                 alert("✅ Xác thực thành công!");
-
+                
                 alert("🔄 Đang tạo thanh toán...");
                 Pi.createPayment({
                     amount: 0.01,
@@ -23,7 +22,7 @@ html
                 }, {
                     onReadyForServerApproval: function(paymentId) {
                         alert("✅ Payment ID: " + paymentId);
-                        fetch('/api/approve', {
+                        fetch('https://pregnancycare5069.up.railway.app/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
@@ -39,7 +38,7 @@ html
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         alert("✅ TXID: " + txid);
-                        fetch('/api/complete', {
+                        fetch('https://pregnancycare5069.up.railway.app/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
@@ -58,7 +57,7 @@ html
                         alert("❌ Lỗi: " + error.message);
                     }
                 });
-
+                
             } catch (error) {
                 alert("❌ Lỗi xác thực: " + error.message);
             }
