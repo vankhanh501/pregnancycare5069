@@ -1,10 +1,6 @@
-`json
+json
 {
-    "build": {
-        "builder": "NIXPACKS"
-    },
-    "deploy": {
-        "startCommand": "node api/approve.js",
-        "healthcheckPath": "/"
-    }
+  "build": {
+    "builder": "NIXPACKS"
+  }
 }
