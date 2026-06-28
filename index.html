@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,8 +13,6 @@
     <script>
         Pi.init({ version: "2.0" });
         
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec'; // THAY URL CỦA BẠN VÀO ĐÂY!
-        
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
@@ -22,27 +21,23 @@
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch(GAS_URL, {
+                        fetch('/api/approve', {
                             method: 'POST',
-                            mode: 'no-cors',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                paymentId: paymentId,
-                                accessToken: auth.accessToken,
-                                action: 'approve'
-                            })
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch(GAS_URL, {
+                        fetch('/api/complete', {
                             method: 'POST',
-                            mode: 'no-cors',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                paymentId: paymentId,
-                                accessToken: auth.accessToken,
-                                action: 'complete'
-                            })
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
                         }).then(function() {
                             alert("✅ Hoàn tất!");
                         });
