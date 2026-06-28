@@ -3,6 +3,12 @@
 <head>
     <title>🧡 Pregnancy Care</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+    <h1>🧡 Pregnancy Care</h1>
+    <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
+        💜 Pay 0.01 Pi Testnet
+    </button>
     <script>
         Pi.init({ version: "2.0" });
         
@@ -10,8 +16,8 @@
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Thanh toán test",
-                    metadata: {}
+                    memo: "Test payment",
+                    metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
                         fetch('https://pregnancycare5069.vercel.app/api/approve', {
@@ -41,11 +47,5 @@
             });
         }
     </script>
-</head>
-<body>
-    <h1>🧡 Pregnancy Care</h1>
-    <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
-        💜 Pay 0.01 Pi Testnet
-    </button>
 </body>
 </html>
