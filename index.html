@@ -1,55 +1,51 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pregnancy Care Testnet</title>
+    <title>🧡 Pregnancy Care</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
         Pi.init({ version: "2.0" });
-
-        function payPi() {
-            Pi.authenticate(['payments'], function(p) {
-                console.log("Incomplete:", p);
-            }).then(function(auth) {
+        
+        function pay() {
+            Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Test",
-                    metadata: { test: true }
+                    memo: "Thanh toán test",
+                    metadata: {}
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                        fetch('https://pregnancycare5069.vercel.app/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                        fetch('https://pregnancycare5069.vercel.app/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
                         }).then(function() {
-                            alert("✅ Thành công!");
-                            location.reload();
+                            alert("✅ Hoàn tất!");
                         });
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
                     onError: function(e) { alert("❌ Lỗi: " + e.message); }
                 });
-            }).catch(function(e) {
-                alert("❌ Lỗi: " + e.message);
             });
         }
     </script>
 </head>
 <body>
     <h1>🧡 Pregnancy Care</h1>
-    <button onclick="payPi()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
-        💜 Pay 0.01 Pi
+    <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
+        💜 Pay 0.01 Pi Testnet
     </button>
 </body>
 </html>
