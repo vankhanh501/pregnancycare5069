@@ -27,11 +27,6 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ paymentId: paymentId })
-                        }).then(function(r) { return r.json(); })
-                        .then(function(d) {
-                            console.log('✅ Approve result:', d);
-                        }).catch(function(e) {
-                            console.error('❌ Approve error:', e.message);
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
