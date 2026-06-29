@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,26 +11,31 @@ html
     </button>
     <script>
         Pi.init({ version: "2.0" });
-        
+
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Test payment",
+                    memo: "Test " + Date.now(),
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('/api/approve', {
+                        fetch('https://pregnancycare5069.vercel.app/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ paymentId: paymentId })
+                        }).then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            console.log('✅ Approve result:', d);
+                        }).catch(function(e) {
+                            console.error('❌ Approve error:', e.message);
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('/api/complete', {
+                        fetch('https://pregnancycare5069.vercel.app/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
