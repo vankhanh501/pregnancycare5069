@@ -1,13 +1,18 @@
 export default async function handler(req, res) {
-    console.log('🔵 Approve called');
-    console.log('Body:', JSON.stringify(req.body));
-    console.log('Auth:', req.headers.authorization ? 'Yes' : 'No');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     
-    const { paymentId } = req.body;
-    const auth = req.headers.authorization;
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     
     try {
-        const r = await fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+        const { paymentId } = req.body;
+        const auth = req.headers.authorization;
+        
+        console.log('Approve payment:', paymentId);
+        
+        const response = await fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
             method: 'POST',
             headers: {
                 'Authorization': auth,
@@ -15,11 +20,14 @@ export default async function handler(req, res) {
             }
         });
         
-        const d = await r.json();
-        console.log('🟢 Approve response:', JSON.stringify(d));
-        res.status(r.status).json(d);
+        const data = await response.json();
+        console.log('Approve response:', JSON.stringify(data));
+        
+        // Trả về đúng status code và response từ Pi API
+        res.status(response.status).json(data);
+        
     } catch (error) {
-        console.log('🔴 Approve error:', error.message);
+        console.error('Approve error:', error.message);
         res.status(500).json({ error: error.message });
     }
 }
