@@ -8,7 +8,7 @@ html
 <body>
     <h1>🧡 Pregnancy Care</h1>
     <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
-        💜 Pay 0.01 Pi Testnet
+        💜 Pay 0.01 Pi
     </button>
     <script>
         Pi.init({ version: "2.0" });
@@ -20,20 +20,27 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        // Gọi thẳng Pi API từ trình duyệt
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/approve', true);
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send(JSON.stringify({}));
+                        // Gọi thẳng Pi API không cần backend
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(r => r.json()).then(() => {
+                            console.log('✅ Approved');
+                        });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/complete', true);
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send(JSON.stringify({}));
-                        alert("✅ Hoàn tất!");
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(r => r.json()).then(() => {
+                            alert("✅ Complete!");
+                        });
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
                     onError: function(e) { alert("❌ Lỗi: " + e.message); }
