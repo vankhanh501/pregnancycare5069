@@ -20,26 +20,20 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('/approve', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': 'Bearer ' + auth.accessToken,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ paymentId: paymentId })
-                        });
+                        // Gọi thẳng Pi API từ trình duyệt
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/approve', true);
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.send(JSON.stringify({}));
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('/complete', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': 'Bearer ' + auth.accessToken,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
-                        }).then(function() {
-                            alert("✅ Hoàn tất!");
-                        });
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/complete', true);
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.send(JSON.stringify({}));
+                        alert("✅ Hoàn tất!");
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
                     onError: function(e) { alert("❌ Lỗi: " + e.message); }
