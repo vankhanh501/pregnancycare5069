@@ -11,16 +11,15 @@
     </button>
     <script>
         Pi.init({ version: "2.0" });
-
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Test " + Date.now(),
+                    memo: "Test",
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('https://pregnancycare5069.vercel.app/api/approve', {
+                        fetch('/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
@@ -30,7 +29,7 @@
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('https://pregnancycare5069.vercel.app/api/complete', {
+                        fetch('/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
