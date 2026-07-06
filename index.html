@@ -20,7 +20,7 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('/approve', {
+                        fetch('/api/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
@@ -30,7 +30,7 @@ html
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('/complete', {
+                        fetch('/api/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
