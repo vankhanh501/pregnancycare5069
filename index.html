@@ -20,26 +20,25 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        // Gọi thẳng Pi API không cần backend
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
+                        fetch('/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
-                        }).then(r => r.json()).then(() => {
-                            console.log('✅ Approved');
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
+                        fetch('/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
-                            }
-                        }).then(r => r.json()).then(() => {
-                            alert("✅ Complete!");
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                        }).then(function() {
+                            alert("✅ Hoàn tất!");
                         });
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
