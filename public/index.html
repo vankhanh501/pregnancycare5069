@@ -1,0 +1,51 @@
+html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🧡 Pregnancy Care</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+    <h1>🧡 Pregnancy Care</h1>
+    <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
+        💜 Pay 0.01 Pi
+    </button>
+    <script>
+        Pi.init({ version: "2.0" });
+        function pay() {
+            Pi.authenticate(['payments'], function() {}).then(function(auth) {
+                Pi.createPayment({
+                    amount: 0.01,
+                    memo: "Test",
+                    metadata: { test: true }
+                }, {
+                    onReadyForServerApproval: function(paymentId) {
+                        fetch('/api/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
+                        });
+                    },
+                    onReadyForServerCompletion: function(paymentId, txid) {
+                        fetch('/api/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                        }).then(function() {
+                            alert("✅ Hoàn tất!");
+                        });
+                    },
+                    onCancel: function() { alert("❌ Đã hủy"); },
+                    onError: function(e) { alert("❌ Lỗi: " + e.message); }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
