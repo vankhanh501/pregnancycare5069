@@ -20,19 +20,26 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/approve', true);
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send('{}');
+                        fetch('/api/approve', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId })
+                        });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'https://api.minepi.com/v2/payments/' + paymentId + '/complete', true);
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + auth.accessToken);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.send('{}');
-                        alert("✅ Hoàn tất!");
+                        fetch('/api/complete', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + auth.accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                        }).then(function() {
+                            alert("✅ Hoàn tất!");
+                        });
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
                     onError: function(e) { alert("❌ Lỗi: " + e.message); }
