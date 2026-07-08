@@ -1,1 +1,1 @@
-YOUR_VALIDATION_KEY_HERE
+ (copy key từ Pi Developer Portal)
