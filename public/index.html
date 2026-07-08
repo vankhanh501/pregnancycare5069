@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,23 +19,23 @@ html
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        fetch('/api/approve', {
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/approve', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ paymentId: paymentId })
+                            body: '{}'
                         });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        fetch('/api/complete', {
+                        fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
                             method: 'POST',
                             headers: {
                                 'Authorization': 'Bearer ' + auth.accessToken,
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                            body: '{}'
                         }).then(function() {
                             alert("✅ Hoàn tất!");
                         });
