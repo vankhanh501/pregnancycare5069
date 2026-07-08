@@ -8,10 +8,11 @@ html
 <body>
     <h1>🧡 Pregnancy Care</h1>
     <button onclick="pay()" style="padding:20px 40px; background:#8B5CF6; color:white; border:none; border-radius:12px; font-size:20px;">
-        💜 Pay 0.01 Pi
+        💜 Pay 0.01 Pi Testnet
     </button>
     <script>
         Pi.init({ version: "2.0" });
+
         function pay() {
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
@@ -27,9 +28,7 @@ html
                                 'Content-Type': 'application/json'
                             },
                             body: '{}'
-                        }).then(function(r) { return r.json(); })
-                        .then(function(d) { console.log('Approved:', d); })
-                        .catch(function(e) { console.error('Approve error:', e); });
+                        }).then(r => r.json()).then(d => console.log(d)).catch(e => console.log(e));
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
@@ -39,7 +38,7 @@ html
                                 'Content-Type': 'application/json'
                             },
                             body: '{}'
-                        }).then(function() {
+                        }).then(r => r.json()).then(function() {
                             alert("✅ Hoàn tất!");
                         }).catch(function(e) {
                             alert("❌ Lỗi: " + e.message);
