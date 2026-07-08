@@ -16,7 +16,7 @@ html
             Pi.authenticate(['payments'], function() {}).then(function(auth) {
                 Pi.createPayment({
                     amount: 0.01,
-                    memo: "Test",
+                    memo: "Test " + Date.now(),
                     metadata: { test: true }
                 }, {
                     onReadyForServerApproval: function(paymentId) {
@@ -27,7 +27,9 @@ html
                                 'Content-Type': 'application/json'
                             },
                             body: '{}'
-                        });
+                        }).then(function(r) { return r.json(); })
+                        .then(function(d) { console.log('Approved:', d); })
+                        .catch(function(e) { console.error('Approve error:', e); });
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
                         fetch('https://api.minepi.com/v2/payments/' + paymentId + '/complete', {
@@ -39,6 +41,8 @@ html
                             body: '{}'
                         }).then(function() {
                             alert("✅ Hoàn tất!");
+                        }).catch(function(e) {
+                            alert("❌ Lỗi: " + e.message);
                         });
                     },
                     onCancel: function() { alert("❌ Đã hủy"); },
